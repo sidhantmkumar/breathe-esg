@@ -1,0 +1,117 @@
+[
+  {
+    "trip_id": "TRIP-001",
+    "traveler_email": "rahul.sharma@acmecorp.com",
+    "flights": [
+      {
+        "departure_airport": "BOM",
+        "arrival_airport": "LHR",
+        "cabin_class": "business",
+        "travel_date": "2024-01-10"
+      },
+      {
+        "departure_airport": "LHR",
+        "arrival_airport": "BOM",
+        "cabin_class": "business",
+        "travel_date": "2024-01-17"
+      }
+    ],
+    "hotels": [
+      {
+        "hotel_name": "Marriott London",
+        "city": "London",
+        "country": "UK",
+        "nights": 6,
+        "check_in": "2024-01-10",
+        "check_out": "2024-01-17"
+      }
+    ],
+    "ground_transport": [
+      {
+        "mode": "taxi",
+        "distance_km": 25,
+        "date": "2024-01-10"
+      },
+      {
+        "mode": "taxi",
+        "distance_km": 30,
+        "date": "2024-01-17"
+      }
+    ]
+  },
+  {
+    "trip_id": "TRIP-002",
+    "traveler_email": "priya.mehta@acmecorp.com",
+    "flights": [
+      {
+        "departure_airport": "DEL",
+        "arrival_airport": "BOM",
+        "cabin_class": "economy",
+        "travel_date": "2024-02-05"
+      },
+      {
+        "departure_airport": "BOM",
+        "arrival_airport": "DEL",
+        "cabin_class": "economy",
+        "travel_date": "2024-02-07"
+      }
+    ],
+    "hotels": [
+      {
+        "hotel_name": "Taj Mumbai",
+        "city": "Mumbai",
+        "country": "India",
+        "nights": 2,
+        "check_in": "2024-02-05",
+        "check_out": "2024-02-07"
+      }
+    ],
+    "ground_transport": [
+      {
+        "mode": "rail",
+        "distance_km": 15,
+        "date": "2024-02-05"
+      }
+    ]
+  },
+  {
+    "trip_id": "TRIP-003",
+    "traveler_email": "amit.patel@acmecorp.com",
+    "flights": [
+      {
+        "departure_airport": "BOM",
+        "arrival_airport": "JFK",
+        "cabin_class": "economy",
+        "travel_date": "2024-03-12"
+      },
+      {
+        "departure_airport": "JFK",
+        "arrival_airport": "BOM",
+        "cabin_class": "economy",
+        "travel_date": "2024-03-19"
+      }
+    ],
+    "hotels": [
+      {
+        "hotel_name": "Hilton New York",
+        "city": "New York",
+        "country": "USA",
+        "nights": 6,
+        "check_in": "2024-03-12",
+        "check_out": "2024-03-19"
+      }
+    ],
+    "ground_transport": [
+      {
+        "mode": "taxi",
+        "distance_km": 45,
+        "date": "2024-03-12"
+      },
+      {
+        "mode": "taxi",
+        "distance_km": 45,
+        "date": "2024-03-19"
+      }
+    ]
+  }
+]

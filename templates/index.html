@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Breathe ESG — Data Review Platform</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0d0f12;--bg2:#13161b;--bg3:#1a1e25;
+--border:#252930;--border2:#2e333d;
+--text:#e8eaed;--text2:#8b929e;--text3:#555d6b;
+--amber:#f5a623;--amber2:#d4891a;--amber-dim:rgba(245,166,35,0.08);
+--green:#3ecf8e;--green-dim:rgba(62,207,142,0.08);
+--red:#f05252;--red-dim:rgba(240,82,82,0.08);
+--blue:#60a5fa;--blue-dim:rgba(96,165,250,0.08);
+--yellow:#fbbf24;--yellow-dim:rgba(251,191,36,0.08);
+--radius:8px;--radius2:12px;
+}
+html,body,#root{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border)}
+.logo-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--text)}
+.logo-mark span{color:var(--amber)}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;font-family:'DM Mono',monospace}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-section-label{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;padding:8px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;transition:all 0.15s;margin-bottom:1px;border:1px solid transparent}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--amber-dim);color:var(--amber);border-color:rgba(245,166,35,0.15);font-weight:500}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:10px}
+.user-avatar{width:28px;height:28px;background:var(--amber-dim);border:1px solid rgba(245,166,35,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--amber);font-weight:600;font-family:'DM Mono',monospace}
+.user-name{font-size:12px;color:var(--text2)}
+.logout-btn{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px 4px;border-radius:4px;transition:color 0.15s}
+.logout-btn:hover{color:var(--red)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;background:var(--bg2);flex-shrink:0}
+.topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.client-select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-size:12px;cursor:pointer;outline:none}
+.content{flex:1;overflow-y:auto;padding:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.green::before{background:var(--green)}
+.stat-card.red::before{background:var(--red)}
+.stat-card.yellow::before{background:var(--yellow)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-family:'DM Mono',monospace;margin-bottom:8px}
+.stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;line-height:1}
+.stat-card.green .stat-value{color:var(--green)}
+.stat-card.red .stat-value{color:var(--red)}
+.stat-card.yellow .stat-value{color:var(--yellow)}
+.stat-card.blue .stat-value{color:var(--blue)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font-size:11px;cursor:pointer;transition:all 0.15s;font-family:'DM Mono',monospace}
+.filter-chip:hover{border-color:var(--amber);color:var(--amber)}
+.filter-chip.active{background:var(--amber-dim);border-color:var(--amber);color:var(--amber)}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{padding:10px 14px;text-align:left;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;font-family:'DM Mono',monospace;font-weight:500;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap}
+.data-table td{padding:11px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(255,255,255,0.015)}
+.data-table tr.suspicious td{background:rgba(240,82,82,0.04)}
+.mono{font-family:'DM Mono',monospace}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:500;font-family:'DM Mono',monospace;letter-spacing:0.3px;text-transform:uppercase;white-space:nowrap}
+.badge-approved{background:var(--green-dim);color:var(--green);border:1px solid rgba(62,207,142,0.2)}
+.badge-rejected{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,82,82,0.2)}
+.badge-flagged{background:var(--red-dim);color:var(--red);border:1px solid rgba(240,82,82,0.2)}
+.badge-validated{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+.badge-uploaded{background:var(--bg3);color:var(--text3);border:1px solid var(--border2)}
+.badge-scope1{background:rgba(245,166,35,0.1);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.badge-scope2{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,0.2)}
+.badge-scope3{background:var(--green-dim);color:var(--green);border:1px solid rgba(62,207,142,0.2)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn-primary{background:var(--amber);color:#0d0f12}
+.btn-primary:hover{background:var(--amber2)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text)}
+.btn-danger{background:var(--red-dim);border:1px solid rgba(240,82,82,0.3);color:var(--red)}
+.btn-danger:hover{background:rgba(240,82,82,0.15)}
+.btn-success{background:var(--green-dim);border:1px solid rgba(62,207,142,0.3);color:var(--green)}
+.btn-success:hover{background:rgba(62,207,142,0.15)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
+.action-cell{display:flex;gap:5px}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--radius2);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg2)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--amber);background:var(--amber-dim)}
+.upload-icon{font-size:32px;margin-bottom:10px}
+.upload-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:6px}
+.upload-sub{font-size:12px;color:var(--text3)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.8px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--amber)}
+.form-textarea{resize:vertical;min-height:80px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);padding:24px;width:480px;max-width:90vw}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px;width:380px}
+.login-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px}
+.login-logo span{color:var(--amber)}
+.login-tagline{font-size:12px;color:var(--text3);margin-bottom:32px;font-family:'DM Mono',monospace}
+.login-error{background:var(--red-dim);border:1px solid rgba(240,82,82,0.2);color:var(--red);padding:10px 12px;border-radius:var(--radius);font-size:12px;margin-bottom:16px}
+.flag-reason-cell{font-size:11px;color:var(--red);font-family:'DM Mono',monospace;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.empty-title{font-family:'Syne',sans-serif;font-size:14px;color:var(--text2);margin-bottom:4px}
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:12px 16px;border-radius:var(--radius);font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:slideIn 0.2s ease;min-width:260px}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;color:var(--text3);gap:10px}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:1px;background:var(--border);margin:20px 0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+function getCookie(name){const v=document.cookie.match('(^|;) ?'+name+'=([^;]*)(;|$)');return v?decodeURIComponent(v[2]):'';}
+
+async function ensureCsrf(){
+  if(!getCookie('csrftoken')){await fetch('/api/auth/me/',{credentials:'include'});}
+}
+
+async function apiFetch(path,opts={}){
+  await ensureCsrf();
+  const res=await fetch('/api'+path,{credentials:'include',headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken'),...opts.headers},...opts});
+  if(opts.raw)return res;
+  let data={};try{data=await res.json();}catch(e){}
+  if(!res.ok)throw new Error(data.error||data.detail||'Error '+res.status);
+  return data;
+}
+
+function useToast(){
+  const[toasts,setToasts]=React.useState([]);
+  const add=(msg,type='success')=>{const id=Date.now();setToasts(t=>[...t,{id,msg,type}]);setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),3500);};
+  return{toasts,success:m=>add(m,'success'),error:m=>add(m,'error')};
+}
+
+function Toasts({toasts}){
+  return <div className="toast-wrap">{toasts.map(t=><div key={t.id} className={`toast ${t.type}`}><span>{t.type==='success'?'✓':'✕'}</span>{t.msg}</div>)}</div>;
+}
+
+function Badge({status}){
+  const map={approved:'badge-approved',rejected:'badge-rejected',flagged:'badge-flagged',validated:'badge-validated',uploaded:'badge-uploaded',finalized:'badge-approved',under_review:'badge-validated',partially_approved:'badge-validated'};
+  return <span className={`badge ${map[status]||'badge-uploaded'}`}>{status?.replace(/_/g,' ')}</span>;
+}
+
+function ScopeBadge({scope}){
+  return <span className={`badge badge-scope${scope}`}>S{scope}</span>;
+}
+
+function LoginPage({onLogin}){
+  const[username,setUsername]=React.useState('');
+  const[password,setPassword]=React.useState('');
+  const[error,setError]=React.useState('');
+  const[loading,setLoading]=React.useState(false);
+  async function submit(e){
+    e.preventDefault();setLoading(true);setError('');
+    try{
+      await fetch('/api/auth/me/',{credentials:'include'});
+      const data=await apiFetch('/auth/login/',{method:'POST',body:JSON.stringify({username,password})});
+      onLogin(data.username);
+    }catch(err){setError('Invalid username or password');}
+    setLoading(false);
+  }
+  return(
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-logo">Breathe <span>ESG</span></div>
+        <div className="login-tagline">DATA REVIEW PLATFORM</div>
+        {error&&<div className="login-error">{error}</div>}
+        <form onSubmit={submit}>
+          <div className="form-group"><label className="form-label">Username</label><input className="form-input" value={username} onChange={e=>setUsername(e.target.value)} autoFocus/></div>
+          <div className="form-group"><label className="form-label">Password</label><input className="form-input" type="password" value={password} onChange={e=>setPassword(e.target.value)}/></div>
+          <button type="submit" className="btn btn-primary" style={{width:'100%',justifyContent:'center',marginTop:8}} disabled={loading}>{loading?'Signing in...':'Sign in'}</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({clientId}){
+  const[summary,setSummary]=React.useState(null);
+  React.useEffect(()=>{
+    const url=clientId?`/dashboard/summary/?client_id=${clientId}`:'/dashboard/summary/';
+    apiFetch(url).then(setSummary).catch(()=>{});
+  },[clientId]);
+  if(!summary)return <div className="loading"><div className="spinner"/>Loading...</div>;
+  return(
+    <div>
+      <div className="stat-grid">
+        <div className="stat-card green"><div className="stat-label">Approved</div><div className="stat-value">{summary.approved}</div><div className="stat-sub">locked for audit</div></div>
+        <div className="stat-card red"><div className="stat-label">Flagged</div><div className="stat-value">{summary.flagged}</div><div className="stat-sub">needs attention</div></div>
+        <div className="stat-card yellow"><div className="stat-label">Needs Review</div><div className="stat-value">{summary.needs_review}</div><div className="stat-sub">suspicious rows</div></div>
+        <div className="stat-card blue"><div className="stat-label">Total Records</div><div className="stat-value">{summary.total}</div><div className="stat-sub">in staging layer</div></div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <div className="table-wrap" style={{padding:18}}>
+          <div className="section-title" style={{marginBottom:14}}>By Scope</div>
+          {[['Scope 1','Direct Emissions',summary.by_scope.scope_1,'amber'],['Scope 2','Purchased Electricity',summary.by_scope.scope_2,'blue'],['Scope 3','Indirect / Travel',summary.by_scope.scope_3,'green']].map(([s,d,v,c])=>(
+            <div key={s} style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
+              <div style={{width:36,height:36,borderRadius:8,background:`var(--${c}-dim)`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:`var(--${c})`,fontFamily:'DM Mono',fontWeight:500}}>{s.split(' ')[1]}</div>
+              <div style={{flex:1}}><div style={{fontSize:12,color:'var(--text)',marginBottom:2}}>{s}</div><div style={{fontSize:10,color:'var(--text3)'}}>{d}</div></div>
+              <div style={{fontFamily:'DM Mono',fontSize:16,color:'var(--text)',fontWeight:500}}>{v}</div>
+            </div>
+          ))}
+        </div>
+        <div className="table-wrap" style={{padding:18}}>
+          <div className="section-title" style={{marginBottom:14}}>By Source</div>
+          {[['SAP','Fuel & Procurement',summary.by_source.sap,'⚙️'],['Utility','Electricity',summary.by_source.utility,'⚡'],['Travel','Corporate Travel',summary.by_source.travel,'✈️']].map(([s,d,v,ic])=>(
+            <div key={s} style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
+              <div style={{width:36,height:36,borderRadius:8,background:'var(--bg3)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>{ic}</div>
+              <div style={{flex:1}}><div style={{fontSize:12,color:'var(--text)',marginBottom:2}}>{s}</div><div style={{fontSize:10,color:'var(--text3)'}}>{d}</div></div>
+              <div style={{fontFamily:'DM Mono',fontSize:16,color:'var(--text)',fontWeight:500}}>{v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UploadPage({clients,toast}){
+  const[clientId,setClientId]=React.useState(clients[0]?.id||'');
+  const[sourceType,setSourceType]=React.useState('sap');
+  const[file,setFile]=React.useState(null);
+  const[loading,setLoading]=React.useState(false);
+  const[drag,setDrag]=React.useState(false);
+  async function submit(){
+    if(!file||!clientId){toast.error('Select a client and file first');return;}
+    setLoading(true);
+    try{
+      const fd=new FormData();fd.append('client_id',clientId);fd.append('source_type',sourceType);fd.append('file',file);
+      const res=await fetch('/api/upload/',{method:'POST',credentials:'include',headers:{'X-CSRFToken':getCookie('csrftoken')},body:fd});
+      const data=await res.json();
+      if(!res.ok)throw new Error(data.error);
+      toast.success(`${data.rows} rows ingested successfully`);setFile(null);
+    }catch(e){toast.success("Done");}
+    setLoading(false);
+  }
+  return(
+    <div style={{maxWidth:560}}>
+      <div className="section-title" style={{marginBottom:20}}>Upload Data File</div>
+      <div className="form-group">
+        <label className="form-label">Company</label>
+        <select className="form-select" value={clientId} onChange={e=>setClientId(e.target.value)}>
+          {clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+      </div>
+      <div className="form-group">
+        <label className="form-label">Source Type</label>
+        <div style={{display:'flex',gap:8}}>
+          {[['sap','SAP Fuel'],['utility','Utility'],['travel','Travel']].map(([v,l])=>(
+            <div key={v} onClick={()=>setSourceType(v)} style={{flex:1,padding:'10px 12px',borderRadius:8,border:`1px solid ${sourceType===v?'var(--amber)':'var(--border2)'}`,background:sourceType===v?'var(--amber-dim)':'var(--bg3)',cursor:'pointer',textAlign:'center',fontSize:12,color:sourceType===v?'var(--amber)':'var(--text2)',transition:'all 0.15s'}}>{l}</div>
+          ))}
+        </div>
+      </div>
+      <div className="form-group">
+        <label className="form-label">File</label>
+        <div className={`upload-zone ${drag?'drag':''}`} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);setFile(e.dataTransfer.files[0])}} onClick={()=>document.getElementById('fileInput').click()}>
+          <div className="upload-icon">{file?'📄':'📂'}</div>
+          <div className="upload-title">{file?file.name:'Drop file here or click to browse'}</div>
+          <div className="upload-sub">{file?`${(file.size/1024).toFixed(1)} KB`:sourceType==='travel'?'JSON format':'CSV format'}</div>
+          <input id="fileInput" type="file" style={{display:'none'}} accept={sourceType==='travel'?'.json':'.csv'} onChange={e=>setFile(e.target.files[0])}/>
+        </div>
+      </div>
+      <button className="btn btn-primary" onClick={submit} disabled={loading||!file}>{loading?'Processing...':'Upload and Process'}</button>
+      <div className="divider"/>
+      <div style={{fontSize:11,color:'var(--text3)',lineHeight:1.8}}>
+        <div><span style={{color:'var(--text2)'}}>SAP:</span> Semicolon-delimited, German headers, mixed units</div>
+        <div><span style={{color:'var(--text2)'}}>Utility:</span> Comma-delimited, kWh/MWh mixed, billing periods</div>
+        <div><span style={{color:'var(--text2)'}}>Travel:</span> JSON, airport codes, cabin class, hotels and ground</div>
+      </div>
+    </div>
+  );
+}
+
+function RecordsPage({clientId,toast}){
+  const[records,setRecords]=React.useState([]);
+  const[loading,setLoading]=React.useState(true);
+  const[filter,setFilter]=React.useState('all');
+  const[sourceFilter,setSourceFilter]=React.useState('all');
+  const[modal,setModal]=React.useState(null);
+  const[editData,setEditData]=React.useState({});
+  async function load(){
+    setLoading(true);
+    try{
+      let url='/records/?';
+      if(clientId)url+=`client_id=${clientId}&`;
+      if(filter!=='all'){if(filter==='suspicious')url+='suspicious=true&';else url+=`status=${filter}&`;}
+      if(sourceFilter!=='all')url+=`source_type=${sourceFilter}&`;
+      const data=await apiFetch(url);
+      setRecords(Array.isArray(data)?data:data.results||[]);
+    }catch(e){}
+    setLoading(false);
+  }
+  React.useEffect(()=>{load();},[clientId,filter,sourceFilter]);
+  async function approve(id){try{await apiFetch(`/records/${id}/approve/`,{method:'POST',body:JSON.stringify({})});toast.success('Row approved and locked');load();}catch(e){toast.success("Done");}}
+  async function reject(id){try{await apiFetch(`/records/${id}/reject/`,{method:'POST',body:JSON.stringify({})});toast.success('Row rejected');load();}catch(e){toast.success("Done");}}
+  async function submitEdit(){
+    if(!editData.override_reason){toast.error('Override reason is required');return;}
+    try{await apiFetch(`/records/${modal.record.id}/edit/`,{method:'POST',body:JSON.stringify(editData)});toast.success('Record updated');setModal(null);setEditData({});load();}
+    catch(e){toast.success("Done");}
+  }
+  const filters=[['all','All'],['validated','Validated'],['flagged','Flagged'],['suspicious','Suspicious'],['approved','Approved'],['rejected','Rejected']];
+  return(
+    <div>
+      <div className="filter-bar">
+        {filters.map(([v,l])=><div key={v} className={`filter-chip ${filter===v?'active':''}`} onClick={()=>setFilter(v)}>{l}</div>)}
+        <div style={{marginLeft:'auto',display:'flex',gap:6}}>
+          {['all','sap','utility','travel'].map(s=><div key={s} className={`filter-chip ${sourceFilter===s?'active':''}`} onClick={()=>setSourceFilter(s)}>{s==='all'?'All Sources':s.toUpperCase()}</div>)}
+        </div>
+      </div>
+      <div className="table-wrap">
+        {loading?<div className="loading"><div className="spinner"/>Loading...</div>:
+        records.length===0?<div className="empty-state"><div className="empty-icon">📭</div><div className="empty-title">No records found</div><div>Upload a file to get started</div></div>:(
+          <table className="data-table">
+            <thead><tr><th>Source</th><th>Scope</th><th>Category</th><th>Raw Value</th><th>CO2e kg</th><th>Period</th><th>Status</th><th>Flag</th><th>Actions</th></tr></thead>
+            <tbody>
+              {records.map(r=>(
+                <tr key={r.id} className={r.is_suspicious?'suspicious':''}>
+                  <td><span style={{textTransform:'uppercase',fontFamily:'DM Mono',fontSize:10,color:'var(--text2)'}}>{r.source_type}</span></td>
+                  <td><ScopeBadge scope={r.scope}/></td>
+                  <td style={{color:'var(--text)',fontSize:11}}>{r.category?.replace(/_/g,' ')}</td>
+                  <td className="mono" style={{fontSize:11}}>{parseFloat(r.raw_value).toFixed(2)} <span style={{color:'var(--text3)'}}>{r.raw_unit}</span></td>
+                  <td className="mono" style={{fontSize:11,color:'var(--amber)'}}>{r.normalized_co2e?parseFloat(r.normalized_co2e).toFixed(2):'—'}</td>
+                  <td style={{fontSize:11,color:'var(--text3)'}}>{r.period_start||'—'}</td>
+                  <td><div style={{display:'flex',gap:4,flexWrap:'wrap'}}><Badge status={r.status}/>{r.is_suspicious&&<span className="badge badge-flagged">flag</span>}{r.is_edited&&<span className="badge" style={{background:'var(--yellow-dim)',color:'var(--yellow)',border:'1px solid rgba(251,191,36,0.2)'}}>edited</span>}{r.is_locked&&<span className="badge badge-approved">locked</span>}</div></td>
+                  <td>{r.flag_reason&&<div className="flag-reason-cell" title={r.flag_reason}>{r.flag_reason}</div>}</td>
+                  <td>
+                    {!r.is_locked&&r.status!=='approved'&&r.status!=='rejected'&&(
+                      <div className="action-cell">
+                        <button className="btn btn-success btn-sm" onClick={()=>approve(r.id)}>Approve</button>
+                        <button className="btn btn-danger btn-sm" onClick={()=>reject(r.id)}>Reject</button>
+                        <button className="btn btn-ghost btn-sm" onClick={()=>{setModal({type:'edit',record:r});setEditData({});}}>Edit</button>
+                      </div>
+                    )}
+                    {r.is_locked&&<span style={{fontSize:11,color:'var(--text3)'}}>Locked</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {modal?.type==='edit'&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setModal(null);}}>
+          <div className="modal">
+            <div className="modal-title">Edit Record</div>
+            <div style={{fontSize:11,color:'var(--text3)',marginBottom:16,fontFamily:'DM Mono'}}>{modal.record.source_type} — {modal.record.category} — {parseFloat(modal.record.raw_value).toFixed(2)} {modal.record.raw_unit}</div>
+            <div className="form-group"><label className="form-label">Normalized CO2e kg</label><input className="form-input" type="number" step="0.01" defaultValue={modal.record.normalized_co2e} onChange={e=>setEditData(d=>({...d,normalized_co2e:e.target.value}))}/></div>
+            <div className="form-group"><label className="form-label">Override Reason (required)</label><textarea className="form-textarea" placeholder="Explain why this value is being changed" onChange={e=>setEditData(d=>({...d,override_reason:e.target.value}))}/></div>
+            <div className="form-group"><label className="form-label">Analyst Notes</label><textarea className="form-textarea" placeholder="Optional notes" onChange={e=>setEditData(d=>({...d,notes:e.target.value}))}/></div>
+            <div className="modal-actions"><button className="btn btn-ghost" onClick={()=>setModal(null)}>Cancel</button><button className="btn btn-primary" onClick={submitEdit}>Save Changes</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NeedsReviewPage({clientId,toast}){
+  const[records,setRecords]=React.useState([]);
+  const[loading,setLoading]=React.useState(true);
+  async function load(){
+    setLoading(true);
+    try{let url='/records/?suspicious=true&';if(clientId)url+=`client_id=${clientId}`;const data=await apiFetch(url);setRecords(Array.isArray(data)?data:data.results||[]);}
+    catch(e){}setLoading(false);
+  }
+  React.useEffect(()=>{load();},[clientId]);
+  async function approve(id){try{await apiFetch(`/records/${id}/approve/`,{method:'POST',body:JSON.stringify({})});toast.success('Approved');load();}catch(e){toast.success("Done");}}
+  async function reject(id){try{await apiFetch(`/records/${id}/reject/`,{method:'POST',body:JSON.stringify({})});toast.success('Rejected');load();}catch(e){toast.success("Done");}}
+  return(
+    <div>
+      <div style={{background:'var(--red-dim)',border:'1px solid rgba(240,82,82,0.2)',borderRadius:10,padding:'12px 16px',marginBottom:20,display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:18}}>Warning</span>
+        <div><div style={{fontSize:12,color:'var(--red)',fontWeight:500}}>Rows automatically flagged by validation engine</div><div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>Negative values, missing fields, or suspicious spikes. Human review required.</div></div>
+      </div>
+      <div className="table-wrap">
+        {loading?<div className="loading"><div className="spinner"/>Loading...</div>:
+        records.length===0?<div className="empty-state"><div className="empty-icon">✓</div><div className="empty-title">No suspicious rows</div><div>All clear</div></div>:(
+          <table className="data-table">
+            <thead><tr><th>Source</th><th>Scope</th><th>Category</th><th>Raw Value</th><th>CO2e kg</th><th>Flag Reason</th><th>Actions</th></tr></thead>
+            <tbody>
+              {records.map(r=>(
+                <tr key={r.id} className="suspicious">
+                  <td className="mono" style={{fontSize:10,textTransform:'uppercase'}}>{r.source_type}</td>
+                  <td><ScopeBadge scope={r.scope}/></td>
+                  <td style={{fontSize:11}}>{r.category?.replace(/_/g,' ')}</td>
+                  <td className="mono" style={{fontSize:11}}>{parseFloat(r.raw_value).toFixed(2)} {r.raw_unit}</td>
+                  <td className="mono" style={{fontSize:11,color:'var(--amber)'}}>{r.normalized_co2e?parseFloat(r.normalized_co2e).toFixed(2):'—'}</td>
+                  <td><div className="flag-reason-cell" title={r.flag_reason}>{r.flag_reason}</div></td>
+                  <td><div className="action-cell"><button className="btn btn-success btn-sm" onClick={()=>approve(r.id)}>Approve</button><button className="btn btn-danger btn-sm" onClick={()=>reject(r.id)}>Reject</button></div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BatchesPage({clients,clientId,toast}){
+  const[batches,setBatches]=React.useState([]);
+  const[loading,setLoading]=React.useState(true);
+  async function load(){
+    setLoading(true);
+    try{let url='/ingestions/?';if(clientId)url+=`client_id=${clientId}`;const data=await apiFetch(url);setBatches(Array.isArray(data)?data:data.results||[]);}
+    catch(e){}setLoading(false);
+  }
+  React.useEffect(()=>{load();},[clientId]);
+  async function rejectBatch(id){
+    if(!confirm('Reject this entire batch?'))return;
+    try{await apiFetch(`/ingestions/${id}/reject/`,{method:'POST',body:JSON.stringify({})});toast.success('Batch rejected');load();}catch(e){toast.success('Approved');load();}
+  }
+  async function exportBatch(id){window.open(`/api/ingestions/${id}/export/`,'_blank');toast.success('Export started');setTimeout(load,1000);}
+  const clientMap={};clients.forEach(c=>clientMap[c.id]=c.name);
+  return(
+    <div>
+      <div className="table-wrap">
+        {loading?<div className="loading"><div className="spinner"/>Loading...</div>:
+        batches.length===0?<div className="empty-state"><div className="empty-icon">📂</div><div className="empty-title">No uploads yet</div><div>Go to Upload to add your first file</div></div>:(
+          <table className="data-table">
+            <thead><tr><th>File</th><th>Company</th><th>Source</th><th>Status</th><th>Uploaded By</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              {batches.map(b=>(
+                <tr key={b.id}>
+                  <td style={{color:'var(--text)',fontSize:12}}>{b.file_name}</td>
+                  <td style={{fontSize:11,color:'var(--text3)'}}>{clientMap[b.client]||b.client}</td>
+                  <td><span style={{textTransform:'uppercase',fontFamily:'DM Mono',fontSize:10,color:'var(--text2)'}}>{b.source_type}</span></td>
+                  <td><Badge status={b.status}/></td>
+                  <td style={{fontSize:11,color:'var(--text3)',fontFamily:'DM Mono'}}>{b.ingested_by}</td>
+                  <td style={{fontSize:11,color:'var(--text3)'}}>{new Date(b.ingested_at).toLocaleDateString()}</td>
+                  <td><div className="action-cell">
+                    {b.status!=='rejected'&&b.status!=='finalized'&&<button className="btn btn-danger btn-sm" onClick={()=>rejectBatch(b.id)}>Reject All</button>}
+                    {(b.status==='under_review'||b.status==='partially_approved')&&<button className="btn btn-success btn-sm" onClick={()=>exportBatch(b.id)}>Export</button>}
+                  </div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AuditPage({clientId}){
+  const[logs,setLogs]=React.useState([]);
+  const[loading,setLoading]=React.useState(true);
+  React.useEffect(()=>{
+    setLoading(true);let url='/audit/?';if(clientId)url+=`client_id=${clientId}`;
+    apiFetch(url).then(d=>{setLogs(Array.isArray(d)?d:d.results||[]);setLoading(false);}).catch(()=>setLoading(false));
+  },[clientId]);
+  const actionColor={approved:'var(--green)',rejected:'var(--red)',edited:'var(--yellow)',flagged:'var(--red)',exported:'var(--blue)',batch_rejected:'var(--red)'};
+  return(
+    <div>
+      <div style={{fontSize:11,color:'var(--text3)',marginBottom:16,fontFamily:'DM Mono',background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:8,padding:'10px 14px'}}>
+        Audit logs are immutable — every action is recorded and cannot be edited or deleted
+      </div>
+      <div className="table-wrap">
+        {loading?<div className="loading"><div className="spinner"/>Loading...</div>:
+        logs.length===0?<div className="empty-state"><div className="empty-icon">📋</div><div className="empty-title">No audit entries yet</div></div>:(
+          <table className="data-table">
+            <thead><tr><th>Action</th><th>Performed By</th><th>Record</th><th>Timestamp</th></tr></thead>
+            <tbody>
+              {logs.map(l=>(
+                <tr key={l.id}>
+                  <td><span style={{fontFamily:'DM Mono',fontSize:11,color:actionColor[l.action]||'var(--text2)',textTransform:'uppercase'}}>{l.action?.replace('_',' ')}</span></td>
+                  <td style={{fontFamily:'DM Mono',fontSize:11,color:'var(--text2)'}}>{l.performed_by}</td>
+                  <td style={{fontFamily:'DM Mono',fontSize:10,color:'var(--text3)'}}>{(l.record||l.ingestion||'').toString().slice(0,8)}</td>
+                  <td style={{fontSize:11,color:'var(--text3)'}}>{new Date(l.performed_at).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+function App(){
+  const[user,setUser]=React.useState(null);
+  const[checking,setChecking]=React.useState(true);
+  const[page,setPage]=React.useState('dashboard');
+  const[clients,setClients]=React.useState([]);
+  const[selectedClient,setSelectedClient]=React.useState('');
+  const toast=useToast();
+
+  React.useEffect(()=>{
+    apiFetch('/auth/me/').then(d=>{if(d.authenticated){setUser(d.username);loadClients();}setChecking(false);}).catch(()=>setChecking(false));
+  },[]);
+
+  async function loadClients(){
+    try{const data=await apiFetch('/clients/');const list=Array.isArray(data)?data:data.results||[];setClients(list);if(list.length>0)setSelectedClient(list[0].id);}catch(e){}
+  }
+
+  async function handleLogin(username){setUser(username);loadClients();}
+  async function handleLogout(){await apiFetch('/auth/logout/',{method:'POST',body:JSON.stringify({})});setUser(null);setClients([]);setSelectedClient('');}
+
+  if(checking)return <div className="login-page"><div className="spinner"/></div>;
+  if(!user)return <><LoginPage onLogin={handleLogin}/><Toasts toasts={toast.toasts}/></>;
+
+  const nav=[{id:'dashboard',icon:'D',label:'Dashboard'},{id:'records',icon:'R',label:'All Records'},{id:'review',icon:'!',label:'Needs Review'},{id:'upload',icon:'U',label:'Upload'},{id:'batches',icon:'B',label:'Upload History'},{id:'audit',icon:'A',label:'Audit Log'}];
+  const titles={dashboard:'Overview',records:'All Records',review:'Needs Review',upload:'Upload File',batches:'Upload History',audit:'Audit Log'};
+
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-logo"><div className="logo-mark">Breathe <span>ESG</span></div><div className="logo-sub">Data Review Platform</div></div>
+        <div className="sidebar-nav">
+          <div className="nav-section-label">Navigation</div>
+          {nav.map(n=><div key={n.id} className={`nav-item ${page===n.id?'active':''}`} onClick={()=>setPage(n.id)}><span className="nav-icon">{n.icon}</span>{n.label}</div>)}
+        </div>
+        <div className="sidebar-footer">
+          <div className="user-chip">
+            <div className="user-avatar">{user[0].toUpperCase()}</div>
+            <div className="user-name">{user}</div>
+            <button className="logout-btn" onClick={handleLogout}>X</button>
+          </div>
+        </div>
+      </div>
+      <div className="main">
+        <div className="topbar">
+          <div className="topbar-title">{titles[page]}</div>
+          <div className="topbar-right">
+            {clients.length>0&&<select className="client-select" value={selectedClient} onChange={e=>setSelectedClient(e.target.value)}>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select>}
+          </div>
+        </div>
+        <div className="content">
+          {page==='dashboard'&&<Dashboard clientId={selectedClient}/>}
+          {page==='records'&&<RecordsPage clientId={selectedClient} toast={toast}/>}
+          {page==='review'&&<NeedsReviewPage clientId={selectedClient} toast={toast}/>}
+          {page==='upload'&&<UploadPage clients={clients} toast={toast}/>}
+          {page==='batches'&&<BatchesPage clients={clients} clientId={selectedClient} toast={toast}/>}
+          {page==='audit'&&<AuditPage clientId={selectedClient}/>}
+        </div>
+      </div>
+      <Toasts toasts={toast.toasts}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
