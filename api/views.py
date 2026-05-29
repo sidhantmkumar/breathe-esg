@@ -6,8 +6,6 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 from .models import Client, DataIngestion, EmissionRecord, ReviewStatus, AuditLog
 from .serializers import (
@@ -22,7 +20,7 @@ from .validators import run_validation
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
-@csrf_exempt
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):

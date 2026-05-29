@@ -521,8 +521,8 @@ function App(){
   async function handleLogin(username){setUser(username);loadClients();}
   async function handleLogout(){await apiFetch('/auth/logout/',{method:'POST',body:JSON.stringify({})});setUser(null);setClients([]);setSelectedClient('');}
 
-if(checking)return <div className="login-page"><div className="spinner"/></div>;
-  if(!user){setUser('analyst');loadClients();}
+  if(checking)return <div className="login-page"><div className="spinner"/></div>;
+  if(!user)return <><LoginPage onLogin={handleLogin}/><Toasts toasts={toast.toasts}/></>;
 
   const nav=[{id:'dashboard',icon:'D',label:'Dashboard'},{id:'records',icon:'R',label:'All Records'},{id:'review',icon:'!',label:'Needs Review'},{id:'upload',icon:'U',label:'Upload'},{id:'batches',icon:'B',label:'Upload History'},{id:'audit',icon:'A',label:'Audit Log'}];
   const titles={dashboard:'Overview',records:'All Records',review:'Needs Review',upload:'Upload File',batches:'Upload History',audit:'Audit Log'};
