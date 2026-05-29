@@ -8,11 +8,11 @@ a review dashboard to approve, reject, and edit data before export to auditors.
 
 ## Live Demo
 
-URL: (add after deployment)
+URL: https://web-production-fa673.up.railway.app
 
 Login credentials:
 Username: analyst
-Password: analyst123
+Password: Esg@2024
 
 Open the URL in your browser.
 Enter the username and password above.
